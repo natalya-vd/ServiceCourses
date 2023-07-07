@@ -11,16 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('lectures', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('login')->unique();
-            $table->string('password');
-            $table->string('path_photo')->nullable();
-            $table->boolean('is_admin')->default(false);
-            $table->rememberToken();
+            $table->string('path_video');
+            $table->integer('duration');
+            $table->text('description');
+            $table->foreignId('chapter_id')
+                ->constrained('chapters')
+                ->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('lectures');
     }
 };
