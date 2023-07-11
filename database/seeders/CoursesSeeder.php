@@ -4,8 +4,14 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\Sequence;
+
+use App\Models\Course;
+use App\Models\Chapter;
+use App\Models\Teacher;
+use App\Models\SkillLevel;
+use App\Models\Lecture;
+use App\Models\Article;
 
 class CoursesSeeder extends Seeder
 {
@@ -14,31 +20,25 @@ class CoursesSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('courses')->insert($this->getData());
-    }
-
-    private function getData()
-    {
-        $count = 200;
-        $data = [];
-
-        for ($i = 1; $i <= $count; $i++) {
-            $data[] = [
-                'name' => fake()->realText(rand(60, 255)),
-                'short_name' => fake('en_US')->realText(rand(20, 100)),
-                'price' => rand(500, 10000),
-                'short_description' => fake()->realText(rand(100, 255)),
-                'description' => fake()->realText(rand(800, 4000)),
-                'what_you_will_learn' => fake()->realText(rand(100, 1000)),
-                'requirements' => fake()->realText(rand(100, 1000)),
-                'lang' => 'русский',
-                'user_id' => rand(3, 5),
-                'skill_level_id' => rand(1, 3),
-                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
-                'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
-            ];
-        }
-
-        return $data;
+        Course::factory()
+            ->count(100)
+            ->has(
+                Chapter::factory()
+                    ->has(Lecture::factory()->count(3), 'lectures')
+                    ->public()
+            )
+            ->has(
+                Chapter::factory()
+                    ->count(4)
+                    ->has(Lecture::factory()->count(3), 'lectures')
+                    ->has(Article::factory()->count(2), 'articles')
+            )
+            ->state(new Sequence(
+                fn (Sequence $sequence) => ['user_id' => Teacher::all()->random()->user_id],
+            ))
+            ->state(new Sequence(
+                fn (Sequence $sequence) => ['skill_level_id' => SkillLevel::all()->random()],
+            ))
+            ->create();
     }
 }
