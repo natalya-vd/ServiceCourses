@@ -1,0 +1,563 @@
+{
+    "openapi":"3.0.2",
+    "info": {
+        "title":"Teacher REST API",
+        "version":"1.0.0",
+        "description": "API для получения данных раздела учителей"
+    },
+    "servers": [
+        {"url":"http://localhost/api/v1/teacher"}
+    ],
+    "paths": {
+        "/courses": {
+            "get": {
+            "tags": ["Courses"],
+            "summary": "Получить список курсов",
+            "description": "Получить список курсов. Возможно фильтровать, сортировать курсы с использованием квери параметров. Необходимый список полей указывается в запросе.",
+            "operationId": "getCourses",
+            "parameters": [
+                {
+                    "$ref": "#/components/parameters/page"
+                },
+                {
+                    "$ref": "#/components/parameters/page_size"
+                },
+                {
+                    "$ref": "#/components/parameters/sort"
+                },
+                {
+                    "$ref": "#/components/parameters/fields"
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "Курсы соответствующие запросу.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["data", "meta", "links"],
+                                "properties": {
+                                    "meta": {
+                                        "$ref": "#/components/schemas/metaPage"
+                                    },
+                                    "data": {
+                                        "type": "array",
+                                        "items": {
+                                            "$ref": "#/components/schemas/course"
+                                        }
+                                    },
+                                    "links": {
+                                        "type": "array",
+                                        "items": {
+                                            "$ref": "#/components/schemas/links"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "500": {
+                    "$ref": "#/components/responses/internalServerError"
+                }
+            }
+            },
+            "post": {
+                "tags": ["Courses"],
+                "summary": "Создать курс",
+                "description": "Добавить курс в каталог курсов.",
+                "operationId": "createCourse",
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/createAndUpdateCourse"
+                },
+                "responses": {
+                    "201": {
+                        "description": "Курс добавлен в каталог",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Курс добавлен в каталог."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/validationError"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/internalServerError"
+                    }
+                }
+            }
+        },
+        "/courses/{courseId}": {
+            "get": {
+                "tags": ["Courses"],
+                "summary": "Получить информацию о курсе",
+                "description": "Получить информацию о курсе.",
+                "operationId": "getCourse",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/courseId"
+                    },
+                    {
+                        "$ref": "#/components/parameters/fields"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Информация о курсе.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["data"],
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/course"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/notFoundError"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/internalServerError"
+                    }
+                }
+            },
+            "put": {
+                "tags": ["Courses"],
+                "summary": "Изменить курс",
+                "description": "Изменить информацию о ранее созданном курсе.",
+                "operationId": "updateCourse",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/courseId"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/createAndUpdateCourse"
+                },
+                "responses": {
+                    "200": {
+                        "description": "Информация о курсе обновлена.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Курс обновлен."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/validationError"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/internalServerError"
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Courses"],
+                "summary": "Удалить курс",
+                "description": "Удалить курс.",
+                "operationId": "deleteCourse",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/courseId"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Курс удален из каталога.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": ["message"],
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Курс удален."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/notFoundError"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/internalServerError"
+                    }
+                }
+            }
+        },
+        "/chapters": {
+            "get": {
+                "tags": ["Chapters"],
+                "summary": "Получить информацию о всех разделах",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/chapters/{chapterId}": {
+            "get": {
+                "tags": ["Chapters"],
+                "summary": "Получить информацию о разделе",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/courses/{courseId}/chapters": {
+            "get": {
+                "summary": "Получить информацию о разделах курса courseId",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "description": "Создание нового раздела курса courseId",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/courses/{courseId}/chapters/{chapterId}": {
+            "get": {
+                "summary": "Получить информацию о разделе chapterId курса courseId",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "put": {
+                "description": "Обновить информацию раздела chapterId курса courseId",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удалить раздел chapterId курса courseId",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "links": {
+                "type": "object",
+                "required": ["href", "rel", "type"],
+                "properties": {
+                    "href": {
+                        "type": "string",
+                        "example": "10/chapters"
+                    },
+                    "rel": {
+                        "type": "string",
+                        "example": "chapters"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": ["GET"],
+                        "example": "GET"
+                    }
+                }
+            },
+            "course": {
+                "type": "object",
+                "description": "Информация о курсе. Доп. поля указываются в запросе в параметрах.",
+                "required": ["id"],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Уникальный id курса",
+                        "example": 10
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Наименование курса",
+                        "example": "JavaScript продвинутый уровень"
+                    },
+                    "short_name": {
+                        "type": "string",
+                        "description": "Короткое название курса на английском",
+                        "example":" javascript_advanced"
+                    },
+                    "price": {
+                        "type": "string",
+                        "description": "Цена курса",
+                        "example": "1999"
+                    },
+                    "short_description": {
+                        "type": "string",
+                        "description": "Краткое описание курса",
+                        "example": "Получите реальную практику на реальных проектах"
+                    },
+                    "what_you_will_learn": {
+                        "type": "string",
+                        "description": "Список что изучите. Массив строк в виде JSON",
+                        "example": "['Узнаете как создавать реальные и полноценные проекты, используя JavaScript', 'Закрепите всю теоретическую информацию', 'Создадите свою JavaScript UI библиотеку', 'Получите необходимую практику и сформируешь портфолио проектов']"
+                    },
+                    "requirements": {
+                        "type": "string",
+                        "description": "Список минимальных требований для изучения курса. Массив строк в виде JSON",
+                        "example": "['Средние навыки владения версткой (HTML/CSS)', 'Средние навыки владения JavaScript (ES6+)', 'Желание получить новые навыки и практику']"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Описание курса",
+                        "example": "<div><p>Этот курс направлен на <strong>практическое</strong> применение языка программирования <strong>JavaScript на реальных проектах.</strong> Вы получаете реальное техническое задание, исходные файлы и мы на практике учимся выполнять такие проекты до самого конца. </p><p><strong>Для кого подойдет этот курс?</strong></p><ul><li><p>Если у вас есть теоретические знания JavaScript, но <em>не хватает практики</em></p></li><li><p>Если вы хотите создать себе потрясающее портфолио проектов</p></li><li><p>Если вы хотите поработать с реальными проектами, но пока <em>без лишних проблем</em>: общения с заказчиком, сроков и задач, которые вы не знаете как решить</p></li><li><p>Если вы хотите создать <strong>свою JavaScript библиотеку</strong></p></li></ul></div>"
+                    },
+                    "lang": {
+                        "type": "string",
+                        "description": "Язык курса",
+                        "example": "русский"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "description": "Дата создания курса",
+                        "example": "2023-07-12 16:28:27"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "description": "Дата изменения курса",
+                        "example": "2023-07-12 16:28:27"
+                    }
+                }
+            },
+            "metaPage": {
+                "type": "object",
+                "description": "Мета данные о записях страницы",
+                "required": ["total_pages", "total_records", "records"],
+                "properties": {
+                    "total_pages": {
+                        "type": "integer",
+                        "description": "Общее количество страниц",
+                        "example": 30
+                    },
+                    "total_records": {
+                        "type": "integer",
+                        "description": "Общее количество записей",
+                        "example": 600
+                    },
+                    "records": {
+                        "type": "integer",
+                        "description": "Количество записей на данной странице",
+                        "example": 20
+                    }
+                }
+            }
+        },
+        "parameters": {
+            "page": {
+                "name": "page",
+                "description": "Запрашиваемая страница ресурса.",
+                "in": "query",
+                "required": false,
+                "schema": {
+                    "type": "string"
+                },
+                "example": "1"
+            },
+            "page_size": {
+                "name": "page_size",
+                "description": "Количество записей ресурса.",
+                "in": "query",
+                "required": false,
+                "schema": {
+                    "type": "string"
+                },
+                "example": "20"
+            },
+            "sort": {
+                "name": "sort",
+                "description": "Сортировка. Указываются порядок сортировки и поле, по которому сортируются записи.",
+                "in": "query",
+                "required": false,
+                "schema": {
+                    "type": "string",
+                    "example": "+created || -created"
+                }
+            },
+            "fields": {
+                "name": "fields",
+                "description": "Запрашиваемые поля. Указывается связь и список полей через запятую.",
+                "in": "query",
+                "required": false,
+                "explode": true,
+                "style": "deepObject",
+                "schema": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "example": {
+                        "course": "price,lang,created_at",
+                        "chapter": "name"
+                    }
+                }
+            },
+            "courseId": {
+                "name": "courseId",
+                "description": "Уникальный Ид курса.",
+                "in": "path",
+                "required": true,
+                "schema": {
+                    "type": "string",
+                    "example": "1"
+                }
+            }
+        },
+        "requestBodies": {
+            "createAndUpdateCourse": {
+                "description": "Создание или обновление ранее созданного курса",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "required": ["name", "short_name"],
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "description": "Наименование курса",
+                                    "example": "JavaScript продвинутый уровень"
+                                },
+                                "short_name": {
+                                    "type": "string",
+                                    "description": "Короткое название курса на английском",
+                                    "example":" javascript_advanced"
+                                },
+                                "price": {
+                                    "type": "string",
+                                    "description": "Цена курса",
+                                    "example": "1999"
+                                },
+                                "short_description": {
+                                    "type": "string",
+                                    "description": "Краткое описание курса",
+                                    "example": "Получите реальную практику на реальных проектах"
+                                },
+                                "what_you_will_learn": {
+                                    "type": "string",
+                                    "description": "Список что изучите. Массив строк в виде JSON",
+                                    "example": "['Узнаете как создавать реальные и полноценные проекты, используя JavaScript', 'Закрепите всю теоретическую информацию', 'Создадите свою JavaScript UI библиотеку', 'Получите необходимую практику и сформируешь портфолио проектов']"
+                                },
+                                "requirements": {
+                                    "type": "string",
+                                    "description": "Список минимальных требований для изучения курса. Массив строк в виде JSON",
+                                    "example": "['Средние навыки владения версткой (HTML/CSS)', 'Средние навыки владения JavaScript (ES6+)', 'Желание получить новые навыки и практику']"
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "description": "Описание курса",
+                                    "example": "<div><p>Этот курс направлен на <strong>практическое</strong> применение языка программирования <strong>JavaScript на реальных проектах.</strong> Вы получаете реальное техническое задание, исходные файлы и мы на практике учимся выполнять такие проекты до самого конца. </p><p><strong>Для кого подойдет этот курс?</strong></p><ul><li><p>Если у вас есть теоретические знания JavaScript, но <em>не хватает практики</em></p></li><li><p>Если вы хотите создать себе потрясающее портфолио проектов</p></li><li><p>Если вы хотите поработать с реальными проектами, но пока <em>без лишних проблем</em>: общения с заказчиком, сроков и задач, которые вы не знаете как решить</p></li><li><p>Если вы хотите создать <strong>свою JavaScript библиотеку</strong></p></li></ul></div>"
+                                },
+                                "lang": {
+                                    "type": "string",
+                                    "description": "Язык курса",
+                                    "example": "русский"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "responses": {
+            "internalServerError": {
+                "description": "Внутрення ошибка сервера"
+            },
+            "validationError": {
+                "description": "Ошибки валидации",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "required": ["errors"],
+                            "properties": {
+                                "errors": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    },
+                                    "example": {
+                                        "name": "Поле обязательно для заполнения",
+                                        "short_description": "Максимальная длина поля 255 символов"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "notFoundError": {
+                "description": "Сервер не может найти запрошенный ресурс.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "1"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ресурс не найден."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
