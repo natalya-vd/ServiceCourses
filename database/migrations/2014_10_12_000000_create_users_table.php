@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('login')->unique();
             $table->string('password');
             $table->string('path_photo')->nullable();
-            $table->boolean('is_admin')->default(false);
+            $table->string('role', 15)->default('USER');
             $table->rememberToken();
             $table->timestamps();
         });

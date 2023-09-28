@@ -1,0 +1,35 @@
+{
+    "openapi":"3.0.2",
+    "info": {
+        "title":"Схемы",
+        "version":"1.0.0",
+        "description": "Общие схемы API."
+    },
+    "paths": {},
+    "components": {
+        "schemas": {
+            "baseMeta": {
+                "type": "object",
+                "description": "Базовая информация ответов.",
+                "required": ["code", "message"],
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "example": 200
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Успех"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}

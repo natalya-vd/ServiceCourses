@@ -1,0 +1,268 @@
+{
+    "openapi":"3.0.2",
+    "info": {
+        "title":"Base REST API",
+        "version":"1.0.0",
+        "description": "API для получения общих данных (вне зависимости от роли пользователя)."
+    },
+    "servers": [
+        {
+            "url":"http://localhost/{basePath}",
+            "variables": {
+                "basePath": {
+                    "default": "api/v1"
+                }
+            }
+        }
+    ],
+    "paths": {
+        "/register": {
+            "post": {
+                "tags": ["Auth"],
+                "summary": "Создать пользователя.",
+                "description": "Создать нового пользователя с ролью USER",
+                "operationId": "register",
+                "parameters": [
+                    {
+                        "$ref": "./parameters.json#/components/parameters/accept"
+                    },
+                    {
+                        "$ref": "./parameters.json#/components/parameters/contentType"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/createUser"
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "./responses.json#/components/responses/createResponse"
+                    },
+                    "422": {
+                        "$ref": "./responses.json#/components/responses/validationError"
+                    },
+                    "500": {
+                        "$ref": "./responses.json#/components/responses/internalServerError"
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": ["Auth"],
+                "summary": "Вход пользователя.",
+                "description": "Вход пользователя по паролю.",
+                "operationId": "login",
+                "parameters": [
+                    {
+                        "$ref": "./parameters.json#/components/parameters/accept"
+                    },
+                    {
+                        "$ref": "./parameters.json#/components/parameters/contentType"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/login"
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешный вход пользователя в систему.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "meta": {
+                                            "$ref": "#/components/schemas/metaLogin"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/user"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "./responses.json#/components/responses/validationError"
+                    },
+                    "500": {
+                        "$ref": "./responses.json#/components/responses/internalServerError"
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "get": {
+                "tags": ["Auth"],
+                "summary": "Выход пользователя.",
+                "description": "Выход пользователя из системы.",
+                "operationId": "logout",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "./parameters.json#/components/parameters/accept"
+                    },
+                    {
+                        "$ref": "./parameters.json#/components/parameters/authorization"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный вход пользователя в систему.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "meta": {
+                                            "$ref": "./schemas.json#/components/schemas/baseMeta"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "./responses.json#/components/responses/unauthorizedError"
+                    },
+                    "500": {
+                        "$ref": "./responses.json#/components/responses/internalServerError"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "user": {
+                "type": "object",
+                "description": "Информация о пользователе.",
+                "required": ["id"],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Уникальный id пользователя",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "ФИО пользователя",
+                        "example": "Иванов Иван Иванович"
+                    },
+                    "login": {
+                        "type": "string",
+                        "description": "Логин пользователя",
+                        "example": "user"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "email пользователя",
+                        "example": "teacher@teacher"
+                    },
+                    "path_photo": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Фото пользователя",
+                        "example": null
+                    }
+                }
+            },
+            "metaLogin": {
+                "type": "object",
+                "description": "Метаданные запроса.",
+                "required": ["code", "message"],
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "description": "Код ответа.",
+                        "example": 200
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Сообщение",
+                        "example": "Success"
+                    },
+                    "token": {
+                        "type": "string",
+                        "description": "Токен авторизованного пользователя для отправки в заголовках запросов.",
+                        "example": "45863dfddkjsdd848f65dfsdf49e8e4f5dsf4dfe8"
+                    }
+                }
+            }
+        },
+        "requestBodies": {
+            "createUser": {
+                "description": "Создание нового пользователя с ролью USER.",
+                "content": {
+                    "application/json": {
+                        "schema":{
+                            "type": "object",
+                            "required": ["login", "password", "password_confirmation", "name", "email"],
+                            "properties": {
+                                "login": {
+                                    "type": "string",
+                                    "description": "Уникальный логин пользователя, по которому он будет входить в систему.",
+                                    "example": "user"
+                                },
+                                "password": {
+                                    "type": "string",
+                                    "description": "Пароль пользователя. Должен содержать символы, буквы, цифры.",
+                                    "minLength": 8,
+                                    "example": "teacher_@12345"
+                                },
+                                "password_confirmation": {
+                                    "type": "string",
+                                    "description": "Подтверждение ранее введенного пароля. Должен совпадать с password",
+                                    "example": "teacher_@12345"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "description": "ФИО пользователя",
+                                    "example": "Иванов Иван Иванович"
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "description": "Уникальный email пользователя.",
+                                    "example": "teacher@teacher"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "login": {
+                "description": "Вход пользователя по паролю.",
+                "content": {
+                    "application/json": {
+                        "schema":{
+                            "type": "object",
+                            "required": ["login", "password"],
+                            "properties": {
+                                "login": {
+                                    "type": "string",
+                                    "description": "Логин пользователя.",
+                                    "example": "user"
+                                },
+                                "password": {
+                                    "type": "string",
+                                    "description": "Пароль пользователя.",
+                                    "minLength": 8,
+                                    "example": "teacher_@12345"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "$ref": "./schemas.json#/components/securitySchemes/bearerAuth"
+            }
+        }
+    }
+}

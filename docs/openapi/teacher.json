@@ -6,7 +6,14 @@
         "description": "API для получения данных раздела учителей"
     },
     "servers": [
-        {"url":"http://localhost/api/v1/teacher"}
+        {
+            "url":"http://localhost/{basePath}",
+            "variables": {
+                "basePath": {
+                    "default": "api/v1/teacher"
+                }
+            }
+        }
     ],
     "paths": {
         "/courses": {
@@ -27,6 +34,12 @@
                 },
                 {
                     "$ref": "#/components/parameters/fields"
+                },
+                {
+                    "$ref": "./parameters.json#/components/parameters/accept"
+                },
+                {
+                    "$ref": "./parameters.json#/components/parameters/contentType"
                 }
             ],
             "responses": {
@@ -59,7 +72,7 @@
                     }
                 },
                 "500": {
-                    "$ref": "#/components/responses/internalServerError"
+                    "$ref": "./responses.json#/components/responses/internalServerError"
                 }
             }
             },
@@ -68,32 +81,26 @@
                 "summary": "Создать курс",
                 "description": "Добавить курс в каталог курсов.",
                 "operationId": "createCourse",
+                "parameters": [
+                    {
+                        "$ref": "./parameters.json#/components/parameters/accept"
+                    },
+                    {
+                        "$ref": "./parameters.json#/components/parameters/contentType"
+                    }
+                ],
                 "requestBody": {
                     "$ref": "#/components/requestBodies/createAndUpdateCourse"
                 },
                 "responses": {
                     "201": {
-                        "description": "Курс добавлен в каталог",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": ["message"],
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Курс добавлен в каталог."
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        "$ref": "./responses.json#/components/responses/createResponse"
                     },
                     "422": {
-                        "$ref": "#/components/responses/validationError"
+                        "$ref": "./responses.json#/components/responses/validationError"
                     },
                     "500": {
-                        "$ref": "#/components/responses/internalServerError"
+                        "$ref": "./responses.json#/components/responses/internalServerError"
                     }
                 }
             }
@@ -110,6 +117,12 @@
                     },
                     {
                         "$ref": "#/components/parameters/fields"
+                    },
+                    {
+                        "$ref": "./parameters.json#/components/parameters/accept"
+                    },
+                    {
+                        "$ref": "./parameters.json#/components/parameters/contentType"
                     }
                 ],
                 "responses": {
@@ -133,10 +146,10 @@
                         }
                     },
                     "404": {
-                        "$ref": "#/components/responses/notFoundError"
+                        "$ref": "./responses.json#/components/responses/notFoundError"
                     },
                     "500": {
-                        "$ref": "#/components/responses/internalServerError"
+                        "$ref": "./responses.json#/components/responses/internalServerError"
                     }
                 }
             },
@@ -148,6 +161,12 @@
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/courseId"
+                    },
+                    {
+                        "$ref": "./parameters.json#/components/parameters/accept"
+                    },
+                    {
+                        "$ref": "./parameters.json#/components/parameters/contentType"
                     }
                 ],
                 "requestBody": {
@@ -172,10 +191,10 @@
                         }
                     },
                     "422": {
-                        "$ref": "#/components/responses/validationError"
+                        "$ref": "./responses.json#/components/responses/validationError"
                     },
                     "500": {
-                        "$ref": "#/components/responses/internalServerError"
+                        "$ref": "./responses.json#/components/responses/internalServerError"
                     }
                 }
             },
@@ -187,6 +206,12 @@
                 "parameters": [
                     {
                         "$ref": "#/components/parameters/courseId"
+                    },
+                    {
+                        "$ref": "./parameters.json#/components/parameters/accept"
+                    },
+                    {
+                        "$ref": "./parameters.json#/components/parameters/contentType"
                     }
                 ],
                 "responses": {
@@ -208,10 +233,10 @@
                         }
                     },
                     "404": {
-                        "$ref": "#/components/responses/notFoundError"
+                        "$ref": "./responses.json#/components/responses/notFoundError"
                     },
                     "500": {
-                        "$ref": "#/components/responses/internalServerError"
+                        "$ref": "./responses.json#/components/responses/internalServerError"
                     }
                 }
             }
@@ -504,54 +529,6 @@
                                     "type": "string",
                                     "description": "Язык курса",
                                     "example": "русский"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "responses": {
-            "internalServerError": {
-                "description": "Внутрення ошибка сервера"
-            },
-            "validationError": {
-                "description": "Ошибки валидации",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "required": ["errors"],
-                            "properties": {
-                                "errors": {
-                                    "type": "object",
-                                    "additionalProperties": {
-                                        "type": "string"
-                                    },
-                                    "example": {
-                                        "name": "Поле обязательно для заполнения",
-                                        "short_description": "Максимальная длина поля 255 символов"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "notFoundError": {
-                "description": "Сервер не может найти запрошенный ресурс.",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "example": "1"
-                                },
-                                "message": {
-                                    "type": "string",
-                                    "example": "Ресурс не найден."
                                 }
                             }
                         }

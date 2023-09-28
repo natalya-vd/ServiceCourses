@@ -24,7 +24,7 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => Hash::make('12345'),
-            "is_admin" => false,
+            "role" => 'USER',
             'remember_token' => Str::random(10),
         ];
     }
@@ -45,7 +45,14 @@ class UserFactory extends Factory
             "name" => 'Администратор',
             "email" => 'admin@admin.ru',
             "login" => 'admin',
-            'is_admin' => true,
+            'role' => 'ADMIN',
+        ]);
+    }
+
+    public function teacher(): Factory
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'TEACHER',
         ]);
     }
 }

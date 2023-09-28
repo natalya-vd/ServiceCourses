@@ -1,0 +1,42 @@
+{
+    "openapi":"3.0.2",
+    "info": {
+        "title":"Параметры",
+        "version":"1.0.0",
+        "description": "Общие параметры API."
+    },
+    "paths": {},
+    "components": {
+        "parameters": {
+            "authorization": {
+                "name": "Authorization",
+                "in": "header",
+                "required": true,
+                "schema": {
+                    "type": "string",
+                    "description": "Заголовок для отправки токена авторизованного пользователя. Составляется из слова Bearer пробел token",
+                    "example": "Bearer 45fdfse85fds45ds45e8r45f45se8f4s5",
+                    "default": "Bearer token"
+                }
+            },
+            "accept": {
+                "name": "Accept",
+                "in": "header",
+                "required": true,
+                "schema": {
+                    "type": "string",
+                    "default": "application/json"
+                }
+            },
+            "contentType": {
+                "name": "Content-Type",
+                "in": "header",
+                "required": true,
+                "schema": {
+                    "type": "string",
+                    "default": "application/json"
+                }
+            }
+        }
+    }
+}
