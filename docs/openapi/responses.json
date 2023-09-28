@@ -1,0 +1,98 @@
+{
+    "openapi":"3.0.2",
+    "info": {
+        "title":"Ответы",
+        "version":"1.0.0",
+        "description": "Общие ответы API."
+    },
+    "paths": {},
+    "components": {
+        "responses": {
+            "createResponse": {
+                "description": "Ресурс добавлен.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "required": ["meta"],
+                            "properties": {
+                                "meta": {
+                                    "$ref": "./schemas.json#/components/schemas/baseMeta"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "internalServerError": {
+                "description": "Внутрення ошибка сервера"
+            },
+            "validationError": {
+                "description": "Ошибки валидации",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "required": ["message", "errors"],
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "Поле обязательно для заполнения. И еще 1 ошибка."
+                                },
+                                "errors": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "example": {
+                                        "name": ["Поле обязательно для заполнения"],
+                                        "short_description": ["Максимальная длина поля 255 символов"]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "notFoundError": {
+                "description": "Сервер не может найти запрошенный ресурс.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "example": "1"
+                                },
+                                "message": {
+                                    "type": "string",
+                                    "example": "Ресурс не найден."
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "unauthorizedError": {
+                "description": "Пользователь неавторизован",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "message": {
+                                    "type": "string",
+                                    "example": "Unauthenticated."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
